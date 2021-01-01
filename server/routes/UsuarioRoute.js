@@ -7,7 +7,7 @@ const {accessLogin, verifyRole } = require('../middlewares/autentificacion');
 const app = express();
 
 /* Agregar usuario */
-app.post('/usuario', (request, resp) => {
+app.post('/usuario', [accessLogin, verifyRole], (request, resp) => {
     let usuario = new Usuario({
         nombre: request.body.nombre,
         email: request.body.email,
