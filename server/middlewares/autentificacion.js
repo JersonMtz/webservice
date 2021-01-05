@@ -1,6 +1,5 @@
 const JWT = require('jsonwebtoken');
 
-
 const accessLogin = (request, resp, next) => {
     let token = request.get('token');
 
@@ -9,7 +8,9 @@ const accessLogin = (request, resp, next) => {
         if (err) {
             return resp.status(401).json({
                 ok: false,
-                message: err
+                err: {
+                    message: 'Token inválido'
+                }
             });
         }
 
@@ -30,10 +31,30 @@ const verifyRole = (request, resp, next) => {
             message: 'Acción no permitida, no es un usuario administrador'
         });
     }
+}
+
+const accessIMG = (request, resp, next) => {
+    let { token } = request.query
+
+    JWT.verify(token, JWT_TOKEN, (err, decoded) => {
+
+        if (err) {
+            return resp.status(401).json({
+                ok: false,
+                err: {
+                    message: 'Token inválido'
+                }
+            });
+        }
+
+        request.usuario = decoded.data;
+        next();
+    });
 
 }
 
 module.exports = {
     accessLogin,
-    verifyRole
+    verifyRole,
+    accessIMG
 };
